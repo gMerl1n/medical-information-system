@@ -35,6 +35,7 @@ class Patient(User):
 class Doctor(User):
     patronymic = models.CharField(max_length=255, blank=False, verbose_name='Отчество')
     speciality = models.CharField(max_length=255, blank=False, verbose_name='Специализация')
+    clinic = models.ManyToManyField("clinics.Clinic")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
