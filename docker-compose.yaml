@@ -8,8 +8,7 @@ services:
       - static:/mis/static/
     ports:
       - "8080:8080"
-    networks:
-      - custom
+
   db:
     image: postgres:16.1
     env_file:
@@ -18,13 +17,7 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     ports:
     - "5432:5432"
-    networks:
-      - custom
 
 volumes:
   postgres_data:
   static:
-
-networks:
-  custom:
-    driver: bridge
