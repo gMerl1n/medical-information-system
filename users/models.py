@@ -32,3 +32,9 @@ class Doctor(User):
     class Meta:
         verbose_name = "Врач"
         verbose_name_plural = "Врачи"
+
+
+class Admin(User):
+    class Meta:
+        verbose_name = "Администратор"
+        verbose_name_plural = "Администраторы"
