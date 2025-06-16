@@ -1,11 +1,8 @@
 import pytest
-from django.utils.translation.trans_real import translation
-
-from users.models import Doctor, Patient
+from users.models import Doctor, Patient, Admin
 from consultations.models import Consultation
 from clinics.models import Clinic
 from django.urls import reverse
-
 
 
 class TestConsultation:
@@ -79,6 +76,23 @@ class TestConsultation:
 
         return consultation
 
+    @pytest.mark.django_db(transaction=True)
+    def create_admin(self) -> Admin:
+        admin_data = {
+            "username": "user_admin",
+            "password": "password_admin",
+            "first_name": "first_name_admin",
+            "last_name": "last_name_admin",
+            "email": "email_admin@email.ru",
+            "role": 3
+        }
+
+        admin = Admin.objects.create(**admin_data)
+
+        admin.save()
+
+        return admin
+
     @pytest.mark.django_db
     def test_create_consultation_by_non_auth_user(self,
                                                   client,
@@ -149,6 +163,29 @@ class TestConsultation:
         assert response.status_code == 401
 
     @pytest.mark.django_db
+    def test_create_consultation_by_admin(self,
+                                          client,
+                                          login_admin_data,
+                                          consultation_data):
+        doctor = self.create_doctor()
+        patient = self.create_patient()
+        self.create_admin()
+
+        consultation_data.update(
+            {
+                "patient": patient.id,
+                "doctor": doctor.id,
+            }
+        )
+
+        response = client.post(reverse("login_admin"), data=login_admin_data)
+        access_token = response.data.get("access")
+        client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
+
+        response = client.post(reverse("create_consultation"), data=consultation_data)
+        assert response.status_code == 403
+
+    @pytest.mark.django_db
     def test_create_consultation_by_patient(self,
                                             client,
                                             patient_data,
@@ -170,6 +207,24 @@ class TestConsultation:
 
         response = client.post(reverse("create_consultation"), data=consultation_data)
         assert response.status_code == 201
+
+    @pytest.mark.django_db
+    def test_get_list_consultations_by_admin(self,
+                                             client,
+                                             login_admin_data,
+                                             consultation_data):
+        doctor = self.create_doctor()
+        patient = self.create_patient()
+        self.create_admin()
+        self.create_consultation(patient, doctor)
+
+        response = client.post(reverse("login_admin"), data=login_admin_data)
+        access_token = response.data.get("access")
+        client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
+
+        response = client.get(reverse("list_consultation"), data=consultation_data)
+        assert response.status_code == 200
+        assert len(response.data) == 1
 
     @pytest.mark.django_db
     def test_get_list_consultations_by_patient(self,
@@ -207,7 +262,27 @@ class TestConsultation:
         assert len(response.data) == 1
 
     @pytest.mark.django_db
-    def test_get_consultations_by_id_by_patient(self,
+    def test_get_consultation_by_id_by_admin(self,
+                                               client,
+                                               login_admin_data,
+                                               consultation_data):
+        doctor = self.create_doctor()
+        patient = self.create_patient()
+        self.create_admin()
+        consultation = self.create_consultation(patient, doctor)
+
+        response = client.post(reverse("login_admin"), data=login_admin_data)
+        access_token = response.data.get("access")
+        client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
+
+        response = client.get(reverse("consultation_detail", args=[consultation.id]))
+
+        consultation_response = response.data
+        assert response.status_code == 200
+        assert consultation_response["status"] == "pending"
+
+    @pytest.mark.django_db
+    def test_get_consultation_by_id_by_patient(self,
                                                 client,
                                                 login_patient_data,
                                                 consultation_data):
@@ -226,7 +301,7 @@ class TestConsultation:
         assert consultation_response["status"] == "pending"
 
     @pytest.mark.django_db
-    def test_get_consultations_by_id_by_doctor(self,
+    def test_get_consultation_by_id_by_doctor(self,
                                                client,
                                                login_doctor_data,
                                                consultation_data):
@@ -284,6 +359,24 @@ class TestConsultation:
 
         response = client.patch(reverse("consultation_update", args=[consultation.id]), data=data)
         assert response.status_code == 200
+
+    @pytest.mark.django_db
+    def test_remove_consultations_by_id_by_patient(self,
+                                                   client,
+                                                   login_admin_data,
+                                                   consultation_data):
+        doctor = self.create_doctor()
+        patient = self.create_patient()
+        self.create_admin()
+        consultation = self.create_consultation(patient, doctor)
+
+        response = client.post(reverse("login_admin"), data=login_admin_data)
+        access_token = response.data.get("access")
+
+        client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
+
+        response = client.delete(reverse("remove_consultation", args=[consultation.id]))
+        assert response.status_code == 204
 
     @pytest.mark.django_db
     def test_remove_consultations_by_id_by_patient(self,

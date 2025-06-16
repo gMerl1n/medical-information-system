@@ -1,12 +1,30 @@
 import pytest
-from users.models import Patient
 from rest_framework.test import APIClient
-from django.urls import reverse
 
 
 @pytest.fixture(scope="function", autouse=True)
 def client():
     return APIClient()
+
+
+@pytest.fixture(scope="function")
+def admin_data():
+    return {
+        "username": "user_admin",
+        "password": "password_admin",
+        "first_name": "first_name_admin",
+        "last_name": "last_name_admin",
+        "email": "email_admin@email.ru",
+        "role": 3
+    }
+
+
+@pytest.fixture(scope="function")
+def login_admin_data():
+    return {
+        "username": "user_admin",
+        "password": "password_admin",
+    }
 
 
 @pytest.fixture(scope="function")
@@ -21,6 +39,7 @@ def patient_data():
         "phone": "phone_patient",
         "role": 1
     }
+
 
 @pytest.fixture(scope="function")
 def login_patient_data():
@@ -43,6 +62,7 @@ def doctor_data():
         "speciality": "specialty_doctor",
         "role": 2
     }
+
 
 @pytest.fixture(scope="function")
 def login_doctor_data():
