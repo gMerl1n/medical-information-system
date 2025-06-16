@@ -7,4 +7,4 @@ do
 done
 python manage.py collectstatic --noinput
 pytest .
-python manage.py runserver
+gunicorn --bind 0.0.0.0:8080 mis.wsgi
