@@ -6,6 +6,8 @@ services:
       - db
     volumes:
       - static:/mis/static/
+    ports:
+      - "8080:8080"
   db:
     image: postgres
     env_file:
