@@ -1,18 +1,12 @@
 from rest_framework import serializers
 from clinics.models import Clinic
-from .models import Doctor, Patient
+from .models import Doctor, Patient, Admin
 
 
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         fields = ('id', 'first_name', 'role', 'phone', 'last_name', 'patronymic', 'username', 'password', 'email')
-
-    def create(self, validated_data):
-        artist = Patient.objects.create(**validated_data)
-        artist.save()
-
-        return artist
 
 
 class DoctorSerializer(serializers.ModelSerializer):
@@ -42,3 +36,9 @@ class DoctorSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at'
         )
+
+
+class AdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Admin
+        fields = ('id', 'first_name', 'role',  'last_name', 'username', 'password', 'email')
