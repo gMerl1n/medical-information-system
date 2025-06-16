@@ -36,6 +36,6 @@
 
 ### Как запустить
 
-+ git pull git@github.com:gMerl1n/medical-information-system.git
++ git clone git@github.com:gMerl1n/medical-information-system.git
 + docker-compose build
 + docker-compose up

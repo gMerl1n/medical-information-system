@@ -10,7 +10,7 @@ services:
       - "8080:8080"
 
   db:
-    image: postgres:16.1
+    image: postgres
     env_file:
       - .env
     volumes:
