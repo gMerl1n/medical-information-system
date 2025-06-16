@@ -264,9 +264,9 @@ class TestConsultation:
 
     @pytest.mark.django_db
     def test_get_consultation_by_id_by_admin(self,
-                                               client,
-                                               login_admin_data,
-                                               consultation_data):
+                                             client,
+                                             login_admin_data,
+                                             consultation_data):
         doctor = self.create_doctor()
         patient = self.create_patient()
         self.create_admin()
@@ -284,9 +284,9 @@ class TestConsultation:
 
     @pytest.mark.django_db
     def test_get_consultation_by_id_by_patient(self,
-                                                client,
-                                                login_patient_data,
-                                                consultation_data):
+                                               client,
+                                               login_patient_data,
+                                               consultation_data):
         doctor = self.create_doctor()
         patient = self.create_patient()
         consultation = self.create_consultation(patient, doctor)
@@ -303,9 +303,9 @@ class TestConsultation:
 
     @pytest.mark.django_db
     def test_get_consultation_by_id_by_doctor(self,
-                                               client,
-                                               login_doctor_data,
-                                               consultation_data):
+                                              client,
+                                              login_doctor_data,
+                                              consultation_data):
         doctor = self.create_doctor()
         patient = self.create_patient()
         consultation = self.create_consultation(patient, doctor)

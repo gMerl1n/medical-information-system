@@ -41,4 +41,4 @@ class DoctorSerializer(serializers.ModelSerializer):
 class AdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = Admin
-        fields = ('id', 'first_name', 'role',  'last_name', 'username', 'password', 'email')
+        fields = ('id', 'first_name', 'role', 'last_name', 'username', 'password', 'email')
