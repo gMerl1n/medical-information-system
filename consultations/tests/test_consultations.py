@@ -1,5 +1,6 @@
 import pytest
 from users.models import Doctor, Patient, Admin
+from mis.settings import PATIENT_ROLE, DOCTOR_ROLE, ADMIN_ROLE
 from consultations.models import Consultation
 from clinics.models import Clinic
 from django.urls import reverse
@@ -29,7 +30,7 @@ class TestConsultation:
             "patronymic": "patronymic_doctor",
             "email": "emai_doctor@email.ru",
             "speciality": "specialty_doctor",
-            "role": 2
+            "role": DOCTOR_ROLE
         }
 
         doctor = Doctor.objects.create(**doctor_data)
@@ -52,7 +53,7 @@ class TestConsultation:
             "patronymic": "patronymic_patient",
             "email": "email_patient@email.ru",
             "phone": "phone_patient",
-            "role": 1
+            "role": PATIENT_ROLE
         }
 
         patient = Patient.objects.create(**patient_data)
@@ -84,7 +85,7 @@ class TestConsultation:
             "first_name": "first_name_admin",
             "last_name": "last_name_admin",
             "email": "email_admin@email.ru",
-            "role": 3
+            "role": ADMIN_ROLE
         }
 
         admin = Admin.objects.create(**admin_data)

@@ -81,9 +81,9 @@ ROLE_CHOICES = {
     3: "Admin",
 }
 
-Patient = 1
-Doctor = 2
-Admin = 3
+PATIENT_ROLE = 1
+DOCTOR_ROLE = 2
+ADMIN_ROLE = 3
 
 WSGI_APPLICATION = 'mis.wsgi.application'
 
