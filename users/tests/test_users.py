@@ -1,6 +1,6 @@
 import pytest
 from django.urls import reverse
-from users.models import Patient, Doctor
+from users.models import Patient, Doctor, Admin
 from clinics.models import Clinic
 
 
@@ -61,11 +61,43 @@ class TestUser:
         return patient
 
     @pytest.mark.django_db(transaction=True)
+    def create_admin(self) -> Admin:
+        admin_data = {
+            "username": "user_admin",
+            "password": "password_admin",
+            "first_name": "first_name_admin",
+            "last_name": "last_name_admin",
+            "email": "email_admin@email.ru",
+            "role": 3
+        }
+
+        admin = Admin.objects.create(**admin_data)
+
+        admin.save()
+
+        return admin
+
+    @pytest.mark.django_db(transaction=True)
     def test_register_patient_already_exists_in_db(self, client, patient_data):
         self.create_patient()
 
         response = client.post(reverse("register_patient"), data=patient_data)
         assert response.status_code == 500
+
+    @pytest.mark.django_db(transaction=True)
+    def test_register_admin(self, client, admin_data):
+        response = client.post(reverse("register_admin"), data=admin_data)
+        assert response.status_code == 201
+        assert Admin.objects.filter(username='user_admin').exists()
+
+    @pytest.mark.django_db(transaction=True)
+    def test_login_admin(self, client, login_admin_data):
+        self.create_admin()
+
+        response = client.post(reverse("login_admin"), data=login_admin_data)
+        access_token = response.data.get("access")
+        assert response.status_code == 200
+        assert access_token is not None
 
     @pytest.mark.django_db(transaction=True)
     def test_register_patient(self, client, patient_data):

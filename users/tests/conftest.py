@@ -8,6 +8,26 @@ def client():
 
 
 @pytest.fixture(scope="function")
+def admin_data():
+    return {
+        "username": "user_admin",
+        "password": "password_admin",
+        "first_name": "first_name_admin",
+        "last_name": "last_name_admin",
+        "email": "email_admin@email.ru",
+        "role": 3
+    }
+
+
+@pytest.fixture(scope="function")
+def login_admin_data():
+    return {
+        "username": "user_admin",
+        "password": "password_admin",
+    }
+
+
+@pytest.fixture(scope="function")
 def patient_data():
     return {
         "username": "user_patient",
